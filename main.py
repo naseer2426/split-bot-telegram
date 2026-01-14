@@ -13,6 +13,10 @@ ENV = os.getenv("ENV", "development").lower()
 IS_DEV = ENV in ["dev", "development"]
 IS_PROD = ENV in ["prod", "production"]
 
+BOT_NAME = os.getenv("BOT_NAME")
+if not BOT_NAME:
+    raise ValueError("BOT_NAME not found in environment variables")
+
 # Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", 
@@ -85,6 +89,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if not update.message or not update.message.text:
         return
     
+    if f"@{BOT_NAME}" not in update.message.text:
+        return
+    
     # Get group/chat ID (works for both groups and private chats)
     group_id = str(update.message.chat.id)
     
@@ -136,10 +143,10 @@ def setup_application() -> Application:
 
 def setup_prod_webhook(application: Application) -> None:
     """Setup and run the bot in production mode with webhook."""
-    webhook_url = os.getenv("BOT_WEBHOOK")
+    webhook_base_url = os.getenv("BOT_WEBHOOK")
     port = os.getenv("PORT")
     
-    if not webhook_url:
+    if not webhook_base_url:
         logger.error("BOT_WEBHOOK not found in environment variables for production mode.")
         raise ValueError("BOT_WEBHOOK not found in environment variables for production mode")
     
@@ -147,18 +154,19 @@ def setup_prod_webhook(application: Application) -> None:
         logger.error("PORT not found in environment variables for production mode.")
         raise ValueError("PORT not found in environment variables for production mode")
     
+    webhook = f"{webhook_base_url}/webhook"
     try:
         port = int(port)
     except ValueError:
         logger.error(f"Invalid PORT value: {port}. Must be an integer.")
         raise ValueError(f"Invalid PORT value: {port}. Must be an integer")
     
-    logger.info(f"Starting bot in production mode with webhook: {webhook_url} on port {port}")
+    logger.info(f"Starting bot in production mode with webhook: {webhook} on port {port}")
     application.run_webhook(
         listen="0.0.0.0",
         port=port,
         url_path="/webhook",
-        webhook_url=webhook_url,
+        webhook_url=webhook,
         allowed_updates=Update.ALL_TYPES
     )
 
