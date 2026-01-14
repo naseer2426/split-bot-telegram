@@ -90,6 +90,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         return
     
     if f"@{BOT_NAME}" not in update.message.text:
+        logger.info(f"Message is not addressed to bot: {update.message.text}")
         return
     
     # Get group/chat ID (works for both groups and private chats)
