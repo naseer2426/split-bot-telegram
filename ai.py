@@ -11,13 +11,15 @@ class SplitBotRequest:
         self.group_id = group_id
         self.sender = sender
         self.image_url = image_url
+        self.platform_type = "TELEGRAM"
 
     def to_dict(self) -> dict:
         """Convert SplitBotRequest to dictionary for JSON serialization."""
         result = {
             "message": self.message,
             "group_id": self.group_id,
-            "sender": self.sender
+            "sender": self.sender,
+            "platform_type": self.platform_type
         }
         if self.image_url is not None:
             result["image_url"] = self.image_url
