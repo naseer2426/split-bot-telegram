@@ -69,6 +69,7 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
             message="",  # Empty message for image-only requests
             group_id=group_id,
             sender=sender,
+            bot_name=BOT_NAME,
             image_url=image_url
         )
         
@@ -108,7 +109,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         request = SplitBotRequest(
             message=update.message.text,
             group_id=group_id,
-            sender=sender
+            sender=sender,
+            bot_name=BOT_NAME
         )
         
         # Process the message with AI (including conversation history)

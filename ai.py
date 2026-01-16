@@ -6,10 +6,11 @@ import httpx
 logger = logging.getLogger(__name__)
 
 class SplitBotRequest:
-    def __init__(self, message: str, group_id: str, sender: str, image_url: Optional[str] = None):
+    def __init__(self, message: str, group_id: str, sender: str, bot_name: str, image_url: Optional[str] = None):
         self.message = message
         self.group_id = group_id
         self.sender = sender
+        self.bot_name = bot_name
         self.image_url = image_url
         self.platform_type = "TELEGRAM"
 
@@ -19,6 +20,7 @@ class SplitBotRequest:
             "message": self.message,
             "group_id": self.group_id,
             "sender": self.sender,
+            "bot_name": self.bot_name,
             "platform_type": self.platform_type
         }
         if self.image_url is not None:
